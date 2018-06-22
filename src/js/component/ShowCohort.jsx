@@ -1,4 +1,6 @@
 import React from 'react';
+import Flux from '@4geeksacademy/react-flux-dash';
+import {store, setReplitsInputs} from '../action.js';
 
 import RowTitle from './show/RowTitle.jsx';
 import FormSlug from './show/FormSlug.jsx';
@@ -6,7 +8,7 @@ import FormCohort from './show/FormCohort.jsx';
 import BannerHeader from './BannerHeader.jsx';
 import SelectReplits from './show/SelectReplits.jsx';
 
-export default class ShowCohort extends React.Component{
+export default class ShowCohort extends Flux.DashView{
     constructor(props){
         super(props);
 
@@ -17,17 +19,23 @@ export default class ShowCohort extends React.Component{
             cohortDataInput: [],
             cohortDataSlug: '',
             forJsonCohort: [],
+            allCohorts: [],
             showPreLoad: false,
+            show: false
         };
     }
 
     static getDerivedStateFromProps(nextProps, prevState){
         
-        if (nextProps.data[0] != prevState.typeProfile 
+        if (nextProps.data.cohortSelected.profile_slug != prevState.typeProfile 
             && 
-            nextProps.data[1] != prevState.typeCohort) {
+            nextProps.data.cohortSelected.slug != prevState.typeCohort) {
             console.log('receiveprops ENTRA!');
-            return { typeProfile: nextProps.data[0], typeCohort: nextProps.data[1] }
+            return { 
+                    typeProfile: nextProps.data.cohortSelected.profile_slug, 
+                    typeCohort: nextProps.data.cohortSelected.slug,
+                    allCohorts: nextProps.data.allCohorts
+            }
         }
 
         return null;
@@ -35,8 +43,11 @@ export default class ShowCohort extends React.Component{
 
     componentDidMount(){
         console.log('didmount');
+        setReplitsInputs(this.state.typeCohort);
+        this.subscribe(store, 'replits', (data)=>{
+            this.setState({ cohortDataInput: data});
+        });
         this.getApiProfile(this.state.typeProfile);
-        this.getApiCohort(this.state.typeCohort);
     }
 
     getApiProfile(profile){
@@ -49,22 +60,6 @@ export default class ShowCohort extends React.Component{
 		})
 		.then((data) => {
             this.setState({ cohortLabel: data });
-		})
-		.catch((error) => {
-			console.log('error', error);
-        })
-    }
-
-    getApiCohort(cohort){
-        console.log('api 2');
-
-        let endpoint = 'https://assets.breatheco.de/apis/replit/cohort/'+cohort;
-		fetch(endpoint)
-		.then((response) => {
-			return response.json();
-		})
-		.then((data) => {
-            this.setState({ cohortDataInput: data });
 		})
 		.catch((error) => {
 			console.log('error', error);
@@ -103,7 +98,7 @@ export default class ShowCohort extends React.Component{
     render(){
         console.log('render');
 
-        let selectReplits = (this.state.showPreLoad) ? <SelectReplits getData={(data)=>this.getDataSelectReplits(data)}/> : ''
+        let selectReplits = (this.state.showPreLoad) ? <SelectReplits cohorts={this.props.data.allCohorts.filter((c)=>c.profile_slug == this.state.typeProfile)}/> : ''
         return (
             <div>
             <BannerHeader button="downloadProgress" createJson={[this.state.typeCohort ,this.state.forJsonCohort]}/>

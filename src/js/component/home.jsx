@@ -22,31 +22,24 @@ export class Home extends React.Component{
 
     //Consulta API
 	getApiCohort(){
-        var currentURL = window.location.href;
-        var parts = currentURL.split('?');
-        var lastSegment = parts.pop() || parts.pop();
+        var url_string = window.location.href
+        var url = new URL(url_string);
+        var id = url.searchParams.get("teacher");
+        console.log(id);
 
         let endpoint;
-        if(lastSegment > 0){
-            endpoint = 'https://talenttree-alesanchezr.c9users.io/cohorts/teacher/'+lastSegment+'?access_token=7677557f945439bb97b072b7078c970218d9a470';
+        if(id || id != null){
+            endpoint = 'https://talenttree-alesanchezr.c9users.io/cohorts/teacher/'+id+'?access_token=7677557f945439bb97b072b7078c970218d9a470';
         }else{
             endpoint = 'https://talenttree-alesanchezr.c9users.io/cohorts/';
         }
 
-        //let endpoint = 'https://talenttree-alesanchezr.c9users.io/cohorts/';
         console.log(endpoint);
 		fetch(endpoint)
 		.then((response) => {
             if (!response.ok) { throw response }else{
                 return response.json();
             }
-            // if(response.status == 400){
-            //     return response.status
-            // }else if(response.status == 401){
-            //     return response.status
-            // }else if(response.status == 200){
-            //     return response.json();
-            // }
 		})
 		.then((data) => {
             let dataCohort = data
@@ -67,10 +60,9 @@ export class Home extends React.Component{
     }
 
     handleChange(event){
-        let x = event.target.value;
-        let eventArray = x.split(",");
+        const cohort = this.state.dataApiAllCohorts.find((c)=>c.slug == event.target.value);
         this.setState({
-            optionSelected: eventArray
+            optionSelected: cohort
         });
     }
 
@@ -84,14 +76,14 @@ export class Home extends React.Component{
     render(){
         
             const optionSelect = this.state.dataApiAllCohorts.map((val, key)=>(
-                <option value={[val.profile_slug, val.slug]} key={key}>{val.name}</option>
+                <option value={val.slug} key={key}>{val.name}</option>
             ));
         
 
         return (
             (this.state.show) ?
             <div>
-                <ShowCohort data={this.state.optionSelected} getData={(data)=>this.getDataNew(data)}/> 
+                <ShowCohort data={{cohortSelected: this.state.optionSelected, allCohorts: this.state.dataApiAllCohorts}}/> 
             </div> :
             <div>
                 <BannerHeader/>
