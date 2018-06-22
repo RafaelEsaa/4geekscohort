@@ -30,7 +30,6 @@ export default class ShowCohort extends Flux.DashView{
         if (nextProps.data.cohortSelected.profile_slug != prevState.typeProfile 
             && 
             nextProps.data.cohortSelected.slug != prevState.typeCohort) {
-            console.log('receiveprops ENTRA!');
             return { 
                     typeProfile: nextProps.data.cohortSelected.profile_slug, 
                     typeCohort: nextProps.data.cohortSelected.slug,
@@ -42,7 +41,7 @@ export default class ShowCohort extends Flux.DashView{
     }
 
     componentDidMount(){
-        console.log('didmount');
+        
         setReplitsInputs(this.state.typeCohort);
         this.subscribe(store, 'replits', (data)=>{
             this.setState({ cohortDataInput: data});
@@ -51,7 +50,7 @@ export default class ShowCohort extends Flux.DashView{
     }
 
     getApiProfile(profile){
-        console.log('api 1');
+        
 
         let endpoint = 'https://assets.breatheco.de/apis/replit/template/'+profile;
 		fetch(endpoint)
@@ -74,7 +73,7 @@ export default class ShowCohort extends Flux.DashView{
     }
 
     getDataFormCohort(data){
-        console.log('getDataFormCohort',data);
+        
         this.setState({
             forJsonCohort: data,
         });
@@ -87,16 +86,11 @@ export default class ShowCohort extends Flux.DashView{
     }
 
     getDataSelectReplits(data){
-        console.log(data);
+        
         this.props.getData(data);
-    }
-
-    componentWillUnmount(){
-        console.log('desmontado');
     }
     
     render(){
-        console.log('render');
 
         let selectReplits = (this.state.showPreLoad) ? <SelectReplits cohorts={this.props.data.allCohorts.filter((c)=>c.profile_slug == this.state.typeProfile)}/> : ''
         return (
