@@ -15,9 +15,6 @@ export default class FormCohort extends React.Component{
     }
 
     static getDerivedStateFromProps(nextProps, prevState){
-        // if (nextProps.data != prevState.labelsAndInpus) {
-        //     return { labelsAndInpus: nextProps.data}
-        // }
         if (nextProps.dataTwo != prevState.inputs) {
             
             let dataForm = nextProps.dataOne.map((t)=>[t.slug, nextProps.dataTwo[t.slug]]);
@@ -30,23 +27,6 @@ export default class FormCohort extends React.Component{
         }
         return null;
     }
-
-    // handleChange(event, key){
-    //     let change = null;
-    //     change = this.state.labelsAndInpus.map((data, i)=>{
-    //         if(i == key){
-    //             return [data[0], event.target.value ]
-    //         }else{
-    //             return data;
-    //         }
-    //     });
-    //     console.log(change);
-        
-    //     this.setState({
-    //         labelsAndInpus: change
-    //     });
-    //     this.props.getData(change);
-    // }
 
     handleChange(event, key){
         let change = null;

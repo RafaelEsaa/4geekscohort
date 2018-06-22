@@ -25,7 +25,6 @@ export class Home extends React.Component{
         var url_string = window.location.href
         var url = new URL(url_string);
         var id = url.searchParams.get("teacher");
-        console.log(id);
 
         let endpoint;
         if(id || id != null){
@@ -34,7 +33,6 @@ export class Home extends React.Component{
             endpoint = 'https://talenttree-alesanchezr.c9users.io/cohorts/';
         }
 
-        console.log(endpoint);
 		fetch(endpoint)
 		.then((response) => {
             if (!response.ok) { throw response }else{
@@ -67,7 +65,6 @@ export class Home extends React.Component{
     }
 
     getDataNew(data){
-        console.log(data)
         this.setState({
             optionSelected: data
         });
