@@ -5,48 +5,33 @@ export default class FormCohort extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            inputs: [],
-            labelsAndInpus: [],
-
-            labels: [],
-            inputs: [],
-            dataForm: []
+            replits: {}
         }
     }
 
+
     static getDerivedStateFromProps(nextProps, prevState){
-        if (nextProps.dataTwo != prevState.inputs) {
-            
-            let dataForm = nextProps.dataOne.map((t)=>[t.slug, nextProps.dataTwo[t.slug]]);
+        if (nextProps.replits != prevState.replits) {
             return { 
-                
-                dataForm,
-                labels: nextProps.dataOne, 
-                inputs: nextProps.dataTwo
+                replits: nextProps.replits
             }
         }
         return null;
     }
 
-    handleChange(event, key){
-        let change = null;
-        change = this.state.dataForm.map((data, i)=>{
-            if(i == key){
-                return [data[0], event.target.value ]
-            }else{
-                return data;
-            }
-        });
+    handleChange(value, key){
+        const newReplits = Object.assign(this.state.replits)
+        newReplits[key] = value
         
         this.setState({
-            dataForm: change
+            replits: newReplits
         });
-        this.props.getData(change);
+        
+        this.props.getData(newReplits);
     }
 
     render(){
-
-        let form = this.state.dataForm.map((value, i)=>{
+        let form = Object.entries(this.props.replits).map((value, i)=>{
             return(
                 <div className="form-group row" key={i}>
                     <label className="col-md-2 col-form-label">{value[0]}:</label>
@@ -56,7 +41,7 @@ export default class FormCohort extends React.Component{
                         className="form-control" 
                         placeholder=""
                         value={value[1]}
-                        onChange={(event)=>this.handleChange(event, i)} />
+                        onChange={(event)=>this.handleChange(event.target.value, value[0])} />
                     </div>
                 </div>
             )

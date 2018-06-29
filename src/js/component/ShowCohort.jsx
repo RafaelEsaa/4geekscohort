@@ -1,6 +1,6 @@
 import React from 'react';
 import Flux from '@4geeksacademy/react-flux-dash';
-import {store, setReplitsInputs} from '../action.js';
+import {store, loadReplits, loadProfiles} from '../action.js';
 
 import RowTitle from './show/RowTitle.jsx';
 import FormSlug from './show/FormSlug.jsx';
@@ -42,22 +42,28 @@ export default class ShowCohort extends Flux.DashView{
 
     componentDidMount(){
         
-        setReplitsInputs(this.state.typeCohort);
+        loadReplits(this.state.typeCohort);
         this.subscribe(store, 'replits', (data)=>{
             this.setState({ cohortDataInput: data});
         });
-        this.getApiProfile(this.state.typeProfile);
+        
+        loadProfiles(this.state.typeProfile);
+        this.subscribe(store, 'templates', (data)=>{
+            this.setState({ cohortLabel: data });
+        });
+
+        // this.getApiProfile(this.state.typeProfile);
     }
 
     getApiProfile(profile){
         
-
         let endpoint = 'https://assets.breatheco.de/apis/replit/template/'+profile;
 		fetch(endpoint)
 		.then((response) => {
 			return response.json();
 		})
 		.then((data) => {
+            console.log(data);
             this.setState({ cohortLabel: data });
 		})
 		.catch((error) => {
@@ -95,7 +101,7 @@ export default class ShowCohort extends Flux.DashView{
         let selectReplits = (this.state.showPreLoad) ? <SelectReplits cohorts={this.props.data.allCohorts.filter((c)=>c.profile_slug == this.state.typeProfile)}/> : ''
         return (
             <div>
-            <BannerHeader button="downloadProgress" createJson={[this.state.typeCohort ,this.state.forJsonCohort]}/>
+            <BannerHeader button="downloadProgress" createJson={[this.state.typeCohort ,this.state.forJsonCohort]} jsonByPost={this.state.forJsonCohort[1]}/>
             <RowTitle title="General Cohort Information"/>
             <FormSlug input={this.state.typeCohort} getData={(data)=>this.getDataFormSlug(data)}/>
             
@@ -117,9 +123,7 @@ export default class ShowCohort extends Flux.DashView{
                 </div>
             </div>
             <FormCohort 
-                //data={this.state.forJsonCohort}
-                dataOne={this.state.cohortLabel}
-                dataTwo={this.state.cohortDataInput}
+                replits={this.state.cohortDataInput}
                 getData={(data)=>this.getDataFormCohort(data)}
                 />
             </div>

@@ -28,9 +28,9 @@ export class Home extends React.Component{
 
         let endpoint;
         if(id || id != null){
-            endpoint = 'https://talenttree-alesanchezr.c9users.io/cohorts/teacher/'+id+'?access_token=7677557f945439bb97b072b7078c970218d9a470';
+            endpoint = process.env.hostTalentTree+'/cohorts/teacher/'+id+'?access_token=7677557f945439bb97b072b7078c970218d9a470';
         }else{
-            endpoint = 'https://talenttree-alesanchezr.c9users.io/cohorts/';
+            endpoint = process.env.hostTalentTree+'/cohorts/';
         }
 
 		fetch(endpoint)
@@ -75,8 +75,6 @@ export class Home extends React.Component{
             const optionSelect = this.state.dataApiAllCohorts.map((val, key)=>(
                 <option value={val.slug} key={key}>{val.name}</option>
             ));
-        
-
         return (
             (this.state.show) ?
             <div>
